@@ -32,11 +32,9 @@ public class Home extends AppCompatActivity implements LoaderManager.LoaderCallb
     private static final String INITIAL_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=2018&orderBy=newest&langRestrict=en&maxResults=10";
 
     /** Initial part of the url used when a search query is entered */
-    private static final String SEARCH_QUERY_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+    private static final String SEARCH_QUERY_URL = "https://www.googleapis.com/books/v1/volumes?";
 
-    /** The part that is added to the end of url to order query results by newest */
-    private static final String ORDERBY = "&orderBy=newest";
-
+  
     /** This variable will contain the url that the loader will pass to asyncTask */
     String QUERY;
 
@@ -97,11 +95,13 @@ public class Home extends AppCompatActivity implements LoaderManager.LoaderCallb
             @Override
             public void onClick(View view) {
                 search_query = (EditText) findViewById(R.id.search_query);
-                StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.append(SEARCH_QUERY_URL);
-                queryBuilder.append(search_query.getText().toString());
-                queryBuilder.append(ORDERBY);
-                QUERY = queryBuilder.toString();
+
+                Uri baseUri = Uri.parse(SEARCH_QUERY_URL);
+                Uri.Builder uriBuilder = baseUri.buildUpon();
+                uriBuilder.appendQueryParameter("q", search_query.getText().toString());
+                uriBuilder.appendQueryParameter("orderBy","newest");
+
+                QUERY = uriBuilder.toString();
                 getLoaderManager().restartLoader(INITIAL_LOADER_ID, null, Home.this);
             }
         });
